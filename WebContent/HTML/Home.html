@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html ng-app="mailApp">
+<head>
+<meta charset="ISO-8859-1">
+<title>SwiftMail</title>
+<link rel="shortcut icon" href="/SwiftMail/Images/Mail_Gmail.png"
+	type="image/x-icon" />
+<script type="text/javascript"
+	src="/SwiftMail/JScript/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="/SwiftMail/JScript/angular.min.js"></script>
+<script type="text/javascript" src="/SwiftMail/JScript/bootstrap.min.js"></script>
+<script type="text/javascript"
+	src="/SwiftMail/JScript/AngularJS/AngularMailApp.js"></script>
+<script type="text/javascript"
+	src="/SwiftMail/JScript/AngularJS/AngularMailController.js"></script>
+<script type="text/javascript"
+	src="/SwiftMail/JScript/AngularJS/AngularMailService.js"></script>
+
+
+<link rel="stylesheet" href="/SwiftMail/CSS/bootstrap.min.css" />
+<link rel="stylesheet" href="/SwiftMail/CSS/jquery-ui.css">
+<link rel="stylesheet" href="/SwiftMail/CSS/Home.css">
+
+</head>
+<div id="pageLoaderImage">
+	<div id="loader">
+		<div id="loadImg">
+			<img alt="Loading..." src="../content/images/load.gif"
+				style="width: 100px;" />
+		</div>
+	</div>
+</div>
+
+<body ng-controller="mailController" id="body">
+
+	<div class="fluid-container">
+		<div id="menu" class="col-xs-12">
+			<div class="navbar-header">
+				<div id="logo" class="col-xs-7 col-sm-6 col-md-2">
+					<h1 class="title">SwiftMail</h1>
+				</div>
+				<div class="input-group col-xs-5 col-sm-6 col-md-5" id="searchbox">
+					<input type="text" class="form-control" placeholder="Search Here"
+						aria-describedby="basic-addon2" ng-model="Search"> <span
+						class="input-group-addon glyphicon glyphicon-search btn btn-searchStyle"
+						id="basic-addon2 "></span>
+				</div>
+			</div>
+		</div>
+
+	</div>
+
+	<div id="fluid-container">
+		<div class="col-md-12" id="mail-operations">
+			<div class="btn-group col-md-2">
+				<button type="button"
+					class="btn btn-default dropdown-toggle col-md-6"
+					data-toggle="dropdown" aria-haspopup="true" id="btn-mail"
+					aria-expanded="false">
+					Smail <span class="caret"></span>
+				</button>
+				<ul class="dropdown-menu" id="to-do">
+					<li><a href="#">Mail</a></li>
+					<li><a href="#">Contacts</a></li>
+					<li role="separator" class="divider"></li>
+					<li><a href="#">Tasks</a></li>
+				</ul>
+			</div>
+
+			<div class="col-md-10" id="toolbar">
+
+				<div class="btn btn-default  col-md-1" id="check-Box"
+					ng-show="multipleSelect">
+					<div>
+						<input type="checkbox" ng-model="all" id="box"
+							ng-click="checkAll(all)">
+					</div>
+
+					<div>
+						<div class="dropdown-toggle col-md-6" id="delete-drop"
+							title="Options" data-toggle="dropdown" aria-haspopup="true"
+							aria-expanded="false">
+							<span class="caret"></span>
+						</div>
+						<ul class="dropdown-menu">
+							<li ng-click="deleteSelected()"><a href="#">Delete
+									Selected</a></li>
+							<li ng-click="none()"><a href="#">None</a></li>
+							<li role="separator" class="divider"></li>
+							<li ng-click="deleteSelected('deleteall')"><a href="#">Delete
+									All</a></li>
+						</ul>
+					</div>
+				</div>
+
+				<button class="btn btn-default  col-md-1" id="goback" title="Back"
+					ng-show="goback" ng-click="back()">
+					<span class="glyphicon glyphicon-share-alt gly-rotate-270"></span>
+				</button>
+
+				<button class="btn btn-default  col-md-1" id="refresh"
+					ng-click="refresh()" ng-show="refreshbtn" title="Refresh">
+					<span class="glyphicon glyphicon-repeat"></span>
+				</button>
+
+				<button class="btn btn-default  col-md-1" id="Delete" title="Delete"
+					ng-if="SerialNumbers!=''" ng-click="deleteSelected()">
+					<span class="glyphicon glyphicon-trash"></span>
+				</button>
+
+				<button type="button"
+					class="btn btn-default dropdown-toggle col-md-1" id="more"
+					data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+					More <span class="caret"></span>
+				</button>
+				<ul class="dropdown-menu" id="more-list">
+					<li class="disabled"><a href="#">Mark as read</a></li>
+					<li class="disabled"><a href="#">Mark as unread</a></li>
+					<li class="disabled"><a href="#">Add To Task</a></li>
+					<li class="disabled"><a href="#">Add Star</a></li>
+					<li role="separator" class="divider"></li>
+					<li class="disabled"><a href="#">Mute</a></li>
+				</ul>
+
+				<div class="col-md-3 col-md-offset-2 text-capitalize " id="popup">
+					<p id="para">
+						{{view}}
+						<!-- <ins> Undo</ins> -->
+					</p>
+				</div>
+
+
+				<div id="pageing">
+					<!-- <span id="paging-values">{{currentPage+1}} -
+						{{numberOfPages()}} of {{length}}</span> -->
+					<button id="next-prev" ng-disabled="currentPage == 0"
+						ng-click="currentPage=currentPage-1"
+						class="btn btn-default glyphicon glyphicon-chevron-left"></button>
+					<button id="next-prev"
+						ng-disabled="currentPage >= inbox.length/pageSize - 1"
+						ng-click="currentPage=currentPage+1"
+						class="btn btn-default glyphicon glyphicon-chevron-right"></button>
+
+				</div>
+
+
+				<!-- <button ng-disabled="currentPage == 0"
+					ng-click="currentPage=currentPage-1">Previous</button>
+				{{currentPage+1}}/{{numberOfPages()}}
+				<button ng-disabled="currentPage >= inbox.length/pageSize - 1"
+					ng-click="currentPage=currentPage+1">Next</button> -->
+
+
+			</div>
+
+		</div>
+	</div>
+
+
+	<!-- mail Inbox & Out Box  -->
+
+	<div id="fluid-container">
+		<div class="col-md-12" id="mail-operations">
+			<div class="btn-group col-md-2" style="padding-left: 0px">
+				<button type="button" class="btn btn-danger  col-md-6" id="compose"
+					data-toggle="modal" data-target="#exampleModal"
+					data-whatever="@mdo" ng-click="clear()">Compose</button>
+				<div>
+					<ul id="maillist-style">
+						<li id="mail-status" class="inbox" ng-click="loadInbox()">Inbox({{inboxlength}})</li>
+						<li id="mail-status" class="outbox" ng-click="out()">Sent
+							Mail</li>
+					</ul>
+				</div>
+			</div>
+
+			<!-- <pre>{{filteredmails}}</pre> -->
+
+			<div class="col-md-10" id="content" ng-show="inboxOutbox">
+				<table class=" table" id="table">
+					<!-- table-hover  table-striped-->
+					<tr ng-style="set_color(mail.checkbox)"
+						ng-repeat="mail in  filteredmails = (inbox | filter:Search)  | startFrom:currentPage*pageSize | limitTo:pageSize ">
+						<td id="checkmail"><input type="checkbox"
+							ng-model="mail.checkbox"
+							ng-click="checked(mail.checkbox,mail.serial)"
+							style="margin-left: 2px;"></td>
+						<td id="checkStarmail"><input type="checkbox"
+							ng-click="fav(mail.serial,mail.checkStar)"
+							ng-model="mail.checkStar" class="glyphicon glyphicon-star-empty"></td>
+						<td id="disp-subject" ng-click="showmail(mail.serial)">{{mail.subject}}</td>
+						<td id="disp-message" ng-click="showmail(mail.serial)">{{mail.message}}</td>
+						<td id="disp-time">{{mail.time}}</td>
+					</tr>
+				</table>
+
+			</div>
+
+
+			<div class="col-md-9" id="showMail" ng-show="showMail">
+				<div id="mailDiv" class="col-md-10">
+					<div>
+						<h3 id="mailHead">{{mailContent.subject}}</h3>
+					</div>
+					<div class="col-md-7"
+						style="padding-left: 6px; display: flex; padding-right: 0px;">
+						<div id="profilePic"></div>
+						<div class="col-md-8">
+							<span style="display: flex;"> <b>{{mailContent.mail}}</b>
+								<!-- <span
+								style="color: #898989; padding-left: 5px; font-size: 13px; padding-top: 2px;">via
+									mail220.atl61.mcsv.net</span> -->
+							</span>
+							<div style="display: flex; color: #898989; font-size: 13px;">
+								{{toFrom}} me
+								<div class="dropdown">
+									<button class="btn btn-default dropdown-toggle showMailDetails"
+										type="button" id="dropdownMenu1 " data-toggle="dropdown"
+										aria-haspopup="true" aria-expanded="true">
+										<span class="caret" style="padding-top: 10px; color: #898989;"></span>
+									</button>
+									<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+										<li><a href="#" style="padding-left: 37px;">from : <b>{{mailContent.mail}}</b></a></li>
+										<li><a href="#" style="padding-left: 37px;">date :
+												{{mailContent.time}}</a></li>
+										<li><a href="#">subject : {{mailContent.subject}}</a></li>
+										<!-- 	<li role="separator" class="divider"></li> -->
+										<li><a href="#"><span class="glyphicon glyphicon-tag"
+												id="tag"> </span> : Marked as Important conversation. </a></li>
+									</ul>
+								</div>
+							</div>
+
+						</div>
+					</div>
+					<div class="col-md-5" style="display: flex; padding: 0px;">
+						<div
+							style="font-size: 13px; padding-right: 8PX; padding-left: 190px; padding-top: 8px;">
+							{{mailContent.time}}</div>
+						<div>
+							<input type="checkbox" class="glyphicon glyphicon-star-empty"
+								ng-click="fav(mailContent.serial,mailContent.isActive)"
+								ng-model="mailContent.isActive"
+								style="font-size: 16px; margin-top: 6px;">
+						</div>
+						<div class="btn-group" role="group" aria-label="..."
+							style="float: right; padding-left: 12px;">
+							<button class="btn btn-default glyphicon glyphicon-share"
+								title="Reply" style="top: 0px;" data-toggle="modal"
+								data-target="#exampleModal" data-whatever="@mdo"
+								ng-click="openReply(mailContent.mail)" id="openMailmore"></button>
+							<button type="button" class="btn btn-default" id="openMailmore"
+								title="More">
+								<span class="caret"></span>
+							</button>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-8  col-md-offset-1  col-md-onset-1"
+					id="mailMessage">
+					<p id="meassageDisplay">{{mailContent.message}}</p>
+				</div>
+			</div>
+
+		</div>
+	</div>
+
+
+
+	<div class="modal" id="exampleModal"
+		aria-labelledby="exampleModalLabel" data-backdrop="false">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					<h4 class="modal-title" id="exampleModalLabel">New message</h4>
+				</div>
+				<form name="mail">
+					<div class="modal-body">
+						<div class="form-group">
+							<input type="email" class="form-control" id="to" placeholder="To"
+								ng-model="mail.address" required>
+						</div>
+						<div class="form-group">
+							<input type="text" class="form-control" id="subject"
+								placeholder="Subject" ng-model="mail.subject" required>
+						</div>
+						<div class="form-group">
+							<textarea class="form-control" id="message" placeholder="Message"
+								ng-model="mail.message" required> </textarea>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<input type="submit" class="btn btn-primary" id="send"
+							ng-click="sendMail(mail)" ng-disabled="mail.$invalid"
+							value="Send" data-dismiss="modal">
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="exampleModall" tabindex="-1" role="dialog"
+		aria-labelledby="exampleModalLabel">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content" style="top: 0px; left: 0px;">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					<h4 class="modal-title" id="exampleModalLabel">Alert !!!</h4>
+				</div>
+				<div class="modal-body">
+					<form>
+						<div class="form-group">
+							<p class="control-label"
+								style="text-align: center; padding: 15px 0px; font-size: 18px; margin: 0px; color: #707070;">
+								Connections Timed Out...<br>Try Again Later
+							</p>
+
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer" style="padding-top: 10px;">
+					<button type="button" class="btn btn-primary" data-dismiss="modal"
+						ng-click="reloadPage()">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+</body>
+</html>
+
