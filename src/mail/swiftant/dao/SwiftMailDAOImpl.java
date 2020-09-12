@@ -18,7 +18,7 @@ public class SwiftMailDAOImpl extends JdbcDaoSupport implements SwiftMailDAO {
 	public List<MailContent> loadInbox() {
 		List<MailContent> Ilist = new ArrayList<MailContent>();
 		try {
-			String sql = "spcr_SwiftMail_InBox";
+			String sql = "SELECT subject, message, email, serial,isactive,crts FROM public.mailcontent";
 			Ilist = getJdbcTemplate().query(sql, new InboxMessages());
 			exist = true;
 		} catch (Exception e) {
@@ -51,7 +51,7 @@ public class SwiftMailDAOImpl extends JdbcDaoSupport implements SwiftMailDAO {
 			String Address = mailContent.getAddress();
 			String Subject = mailContent.getSubject();
 			String Message = mailContent.getMessage();
-			String Sql = "EXEC spci_SwiftMail ?,?,?";
+			String Sql = "INSERT INTO public.mailcontent (Email, Subject, Message) VALUES(?, ?, ?)";
 			Object obj[] = new Object[] { Address, Subject, Message };
 			int typ[] = new int[] { Types.VARCHAR, Types.VARCHAR, Types.VARCHAR };
 			getJdbcTemplate().update(Sql, obj, typ);
@@ -68,7 +68,7 @@ public class SwiftMailDAOImpl extends JdbcDaoSupport implements SwiftMailDAO {
 	public List<MailContent> loadOutbox() {
 		List<MailContent> Ilist = new ArrayList<MailContent>();
 		try {
-			String sql = "Exec spcr_SwiftMail_OutBox";
+			String sql = "SELECT subject, message, email, serial, isactive, crts FROM public.mailcontent";
 			Ilist = getJdbcTemplate().query(sql, new OutMessages());
 			exist = true;
 		} catch (Exception e) {
@@ -98,7 +98,7 @@ public class SwiftMailDAOImpl extends JdbcDaoSupport implements SwiftMailDAO {
 	public boolean deleteSelected(List<MailContent> mailcontentDetails) {
 		try {
 
-			String sql = "Exec spcu_SwiftMail_Delete ?";
+			String sql = "delete from public.mailcontent where serial = ? ";
 			for (int i = 0; i < mailcontentDetails.size(); i++) {
 				Integer serialId = mailcontentDetails.get(i).getSerial();
 				Object obj[] = new Object[] { serialId };
@@ -119,7 +119,7 @@ public class SwiftMailDAOImpl extends JdbcDaoSupport implements SwiftMailDAO {
 
 			int isActive = mailContent.getIsActive();
 			int serial = mailContent.getSerial();
-			String sql = "Exec spcu_SwiftMail_Fav ?,?";
+			String sql = "update public.mailcontent set isactive = ? where serial = ?";
 			Object obj[] = new Object[] { isActive, serial };
 			int type[] = new int[] { Types.INTEGER, Types.INTEGER };
 			getJdbcTemplate().update(sql, obj, type);
